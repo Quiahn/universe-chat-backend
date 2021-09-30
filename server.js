@@ -1,12 +1,18 @@
-// import express and socket io then invoke them so we don't have to declare new variables
-const express = require('express')()
-const io = require('socket.io')()
+// imports
+const express = require('express')
+const http = require('http')
+const app = express()
+const server = http.createServer(app)
+const socket = require('socket.io')
+const io = socket(server)
 
-// define variables
 const port = 4000
 
-// get express to listen to the port we declared
-express.listen(port, () => {
-    console.log('Server Listening To Port ' + port + '!')
+io.on('connection', socket => {
+    socket.emit('your id', socket.id)
+    socket.on('send message', body => {
+        io.emit('message', body)
+    })
 })
 
+server.listen(port, () => console.log('server is running on port' + port))
